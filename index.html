@@ -22,12 +22,19 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 flex items-center justify-center min-h-screen">
+<body class="bg-gray-50 flex flex-col items-center justify-center min-h-screen p-4">
 
     <div id="word-of-the-day" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg max-w-md w-full mx-4 my-8">
         <p class="text-center text-gray-500">Loading word of the day...</p>
     </div>
 
+    <div style="text-align: center; margin-top: 2rem; margin-bottom: 2rem;">
+        <a href="https://mikewhyle.com/" title="Back to Mike Whyle Home" style="display: inline-block;">
+            <img src="https://mikewhyle.com/wp-content/uploads/2025/03/logohorizontal.png" 
+                 alt="Mike Whyle Home" 
+                 style="max-width: 150px; height: auto; border: 0;"> 
+                 </a>
+    </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // URL for the OpenSheet API endpoint for your Google Sheet

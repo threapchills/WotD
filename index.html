@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word of the Day</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Apply Inter font globally if loaded */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Basic styling for loading/error states */
+        #word-of-the-day {
+            min-height: 150px; /* Ensure container has height during load */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen">
+
+    <div id="word-of-the-day" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg max-w-md w-full mx-4 my-8">
+        <p class="text-center text-gray-500">Loading word of the day...</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // URL for the OpenSheet API endpoint for your Google Sheet
+            const sheetUrl = "https://opensheet.elk.sh/1WuvxQvV8CNBNONWZCPcgxK6Co7ifhOkuKp12FVEWN_U/sheet1";
+            const container = document.getElementById('word-of-the-day');
+
+            try {
+                // --- Calculate Day of Year ---
+                const now = new Date();
+                // Check if the current date is valid
+                if (isNaN(now.getTime())) {
+                    throw new Error("Invalid date object");
+                }
+                const startOfYear = new Date(now.getFullYear(), 0, 0);
+                const diff = now.getTime() - startOfYear.getTime(); // Ensure time calculation
+                if (isNaN(diff) || diff < 0) {
+                     throw new Error("Date difference calculation failed");
+                }
+                const oneDay = 1000 * 60 * 60 * 24; // milliseconds in a day
+                const dayOfYear = Math.floor(diff / oneDay); // Day number (1-366)
+
+                // --- Fetch Data from API ---
+                fetch(sheetUrl)
+                    .then(response => {
+                        // Check if the network response is ok
+                        if (!response.ok) {
+                            throw new Error(`Network response was not ok: ${response.statusText}`);
+                        }
+                        return response.json(); // Parse JSON data
+                    })
+                    .then(data => {
+                        // Check if data is an array
+                        if (!Array.isArray(data)) {
+                            console.error("Fetched data is not an array:", data);
+                            throw new Error("Invalid data format received from API.");
+                        }
+
+                        // --- Process and Display Data ---
+                        // Adjust for 0-based array index
+                        const wordIndex = dayOfYear - 1;
+
+                        // Check if the index is valid for the data array length
+                        if (wordIndex >= 0 && wordIndex < data.length) {
+                            const wordEntry = data[wordIndex];
+
+                            // Check if the entry and expected properties exist
+                            // Adjust property names EXACTLY as they appear in your Google Sheet columns
+                            if (wordEntry && wordEntry.Word && wordEntry.Definition && wordEntry.Synonym && wordEntry['Part of Speech']) {
+                                // Construct the HTML to display the word details using Tailwind classes
+                                container.innerHTML = `
+                                    <h3 class="text-lg font-semibold text-gray-500 mb-3 text-center">Word of the Day</h3>
+                                    <div class="text-center mb-4">
+                                        <span class="text-3xl sm:text-4xl font-bold text-indigo-600">${wordEntry.Word}</span>
+                                        <span class="text-sm text-gray-500 italic ml-2">(${wordEntry['Part of Speech']})</span>
+                                    </div>
+                                    <div class="text-gray-700 space-y-2">
+                                        <p>
+                                            <strong class="font-semibold text-gray-800">Definition:</strong>
+                                            ${wordEntry.Definition}
+                                        </p>
+                                        <p>
+                                            <strong class="font-semibold text-gray-800">Synonym:</strong>
+                                            ${wordEntry.Synonym}
+                                        </p>
+                                    </div>
+                                `;
+                            } else {
+                                console.error("Word entry or its properties are missing for index:", wordIndex, wordEntry);
+                                throw new Error(`Data for day ${dayOfYear} is incomplete or has incorrect property names.`);
+                            }
+                        } else {
+                            // Handle case where dayOfYear is out of bounds for the data list
+                            console.error("Calculated dayOfYear is out of bounds:", dayOfYear, "Data length:", data.length);
+                            throw new Error(`No word available for day ${dayOfYear}.`);
+                        }
+                    })
+                    .catch(error => {
+                        // Handle errors during fetch or processing
+                        console.error("Error fetching or processing Word of the Day:", error);
+                        container.innerHTML = `<p class="text-center text-red-600 font-semibold">Failed to load word of the day. Please try again later.</p><p class="text-center text-xs text-gray-500">${error.message}</p>`;
+                    });
+
+            } catch (error) {
+                 // Catch errors from date calculation or initial setup
+                console.error("Error setting up Word of the Day:", error);
+                container.innerHTML = `<p class="text-center text-red-600 font-semibold">An error occurred preparing the Word of the Day.</p><p class="text-center text-xs text-gray-500">${error.message}</p>`;
+            }
+        });
+    </script>
+
+</body>
+</html>

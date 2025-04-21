@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Idiom of the Week</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #ffffff;
+    }
+  </style>
+</head>
+<body class="bg-white flex flex-col items-center min-h-screen p-4">
+
+  <!-- Logo Top -->
+  <div class="my-4 text-center">
+    <a href="https://mikewhyle.com/" title="Back to Mike Whyle Home">
+      <img src="https://mikewhyle.com/wp-content/uploads/2025/03/logohorizontal.png" alt="Mike Whyle Home" class="mx-auto" style="max-width: 150px; height: auto;">
+    </a>
+  </div>
+
+  <!-- This Week's Image -->
+  <div id="current-idiom" class="max-w-md w-full mb-8">
+    <h2 class="text-center text-lg font-semibold text-gray-700 mb-2">This Week's Visual Riddle</h2>
+    <img id="currentImage" src="" alt="Guess the idiom" class="rounded-xl shadow-md" />
+  </div>
+
+  <!-- Last Week -->
+  <div id="last-week" class="max-w-md w-full mb-8">
+    <h3 class="text-center text-md font-semibold text-gray-600 mb-2">Last Week's Idiom</h3>
+    <img id="lastImage" src="" alt="Last week's idiom" class="rounded-md shadow" />
+    <p id="lastCaption" class="text-center text-sm text-gray-500 mt-1 italic"></p>
+  </div>
+
+  <!-- Archive -->
+  <div id="archive" class="max-w-md w-full">
+    <h3 class="text-center text-md font-semibold text-gray-600 mb-2">Archive</h3>
+    <div id="archiveList" class="space-y-4"></div>
+  </div>
+
+  <!-- Footer note -->
+  <div class="text-center text-xs text-gray-500 my-8 max-w-md">
+    Playing with idioms strengthens linguistic intuition, cultural fluency, and creative thinking. Guess first, reveal later — it’s more fun that way.
+  </div>
+
+  <!-- Logo Bottom -->
+  <div class="my-4 text-center">
+    <a href="https://mikewhyle.com/" title="Back to Mike Whyle Home">
+      <img src="https://mikewhyle.com/wp-content/uploads/2025/03/logohorizontal.png" alt="Mike Whyle Home" class="mx-auto" style="max-width: 150px; height: auto;">
+    </a>
+  </div>
+
+  <script>
+    fetch('idioms.json')
+      .then(res => res.json())
+      .then(data => {
+        const today = new Date();
+        const startOfYear = new Date(today.getFullYear(), 0, 0);
+        const diff = today - startOfYear;
+        const day = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const currentWeek = Math.ceil(day / 7);
+
+        const current = data.find(entry => entry.week === currentWeek);
+        const previous = data.find(entry => entry.week === currentWeek - 1);
+        const archive = data.filter(entry => entry.week < currentWeek - 1);
+
+        if (current) {
+          document.getElementById('currentImage').src = current.image;
+        }
+
+        if (previous) {
+          document.getElementById('lastImage').src = previous.image;
+          document.getElementById('lastCaption').textContent = previous.idiom;
+        }
+
+        if (archive.length > 0) {
+          const container = document.getElementById('archiveList');
+          archive.reverse().forEach(entry => {
+            const block = document.createElement('div');
+            block.innerHTML = `
+              <img src="${entry.image}" alt="${entry.idiom}" class="rounded shadow" />
+              <p class="text-sm text-center italic text-gray-500 mt-1">${entry.idiom}</p>
+            `;
+            container.appendChild(block);
+          });
+        }
+      });
+  </script>
+
+</body>
+</html>

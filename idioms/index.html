@@ -60,17 +60,17 @@
       .then(res => res.json())
       .then(data => {
         const today = new Date();
-        const startOfCycle = new Date(today.getFullYear(), 3, 8); // April 8 = Week 1 start
+        const startOfCycle = new Date(today.getFullYear(), 3, 8); // April 8
         const diff = today - startOfCycle;
         const day = Math.floor(diff / (1000 * 60 * 60 * 24));
         const currentWeek = Math.ceil(day / 7);
 
-        const current = data.find(entry => entry.week === currentWeek);
+        const thisWeek = data.find(entry => entry.week === currentWeek);
         const lastWeek = data.find(entry => entry.week === currentWeek - 1);
         const archive = data.filter(entry => entry.week < currentWeek - 1);
 
-        if (current) {
-          document.getElementById('currentImage').src = current.image;
+        if (thisWeek) {
+          document.getElementById('currentImage').src = thisWeek.image;
         }
 
         if (lastWeek) {

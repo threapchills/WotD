@@ -60,8 +60,8 @@
       .then(res => res.json())
       .then(data => {
         const today = new Date();
-        const startOfYear = new Date(today.getFullYear(), 0, 0);
-        const diff = today - startOfYear;
+        const startOfCycle = new Date(today.getFullYear(), 3, 8); // April 8 is start of week 1
+        const diff = today - startOfCycle;
         const day = Math.floor(diff / (1000 * 60 * 60 * 24));
         const currentWeek = Math.ceil(day / 7);
 

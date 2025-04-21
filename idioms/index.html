@@ -60,35 +60,41 @@
       .then(res => res.json())
       .then(data => {
         const today = new Date();
-        const startOfCycle = new Date(today.getFullYear(), 3, 8); // April 8
-        const diff = today - startOfCycle;
-        const day = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const currentWeek = Math.ceil(day / 7);
+        const startOfCycle = new Date(today.getFullYear(), 3, 8); // April 8 = Week 1
+        const dayOffset = Math.floor((today - startOfCycle) / (1000 * 60 * 60 * 24));
+        let weekNumber = Math.floor(dayOffset / 7) + 1;
 
-        const thisWeek = data.find(entry => entry.week === currentWeek);
-        const lastWeek = data.find(entry => entry.week === currentWeek - 1);
-        const archive = data.filter(entry => entry.week < currentWeek - 1);
+        // Loop logic for > 56 weeks
+        if (weekNumber > data.length) {
+          weekNumber = ((weekNumber - 1) % data.length) + 1;
+        }
+
+        const thisWeek = data.find(entry => entry.week === weekNumber);
+        const lastWeek = data.find(entry => entry.week === weekNumber - 1);
+        const archive = data.filter(entry => entry.week < weekNumber - 1);
 
         if (thisWeek) {
-          document.getElementById('currentImage').src = thisWeek.image;
+          const img = document.getElementById('currentImage');
+          img.src = thisWeek.image;
+          img.alt = thisWeek.idiom;
         }
 
         if (lastWeek) {
-          document.getElementById('lastImage').src = lastWeek.image;
+          const lastImg = document.getElementById('lastImage');
+          lastImg.src = lastWeek.image;
+          lastImg.alt = lastWeek.idiom;
           document.getElementById('lastCaption').textContent = lastWeek.idiom;
         }
 
-        if (archive.length > 0) {
-          const container = document.getElementById('archiveList');
-          archive.reverse().forEach(entry => {
-            const block = document.createElement('div');
-            block.innerHTML = `
-              <img src="${entry.image}" alt="${entry.idiom}" class="rounded shadow" />
-              <p class="text-sm text-center italic text-gray-500 mt-1">${entry.idiom}</p>
-            `;
-            container.appendChild(block);
-          });
-        }
+        const container = document.getElementById('archiveList');
+        archive.reverse().forEach(entry => {
+          const block = document.createElement('div');
+          block.innerHTML = `
+            <img src="${entry.image}" alt="${entry.idiom}" class="rounded shadow" />
+            <p class="text-sm text-center italic text-gray-500 mt-1">${entry.idiom}</p>
+          `;
+          container.appendChild(block);
+        });
       });
   </script>
 

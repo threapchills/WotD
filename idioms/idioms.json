@@ -1,7 +1,17 @@
 [
   {
-    "week": 8,
+    "week": 1,
     "idiom": "Bite the bullet",
     "image": "images/week1.png"
+  },
+  {
+    "week": 2,
+    "idiom": "When pigs fly",
+    "image": "images/week2.png"
+  },
+  {
+    "week": 3,
+    "idiom": "Spill the beans",
+    "image": "images/week3.png"
   }
 ]

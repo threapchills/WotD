@@ -1,17 +1,17 @@
 [
   {
     "week": 1,
-    "idiom": "Bite the bullet",
+    "idiom": "Paint the town red",
     "image": "images/week1.png"
   },
   {
     "week": 2,
-    "idiom": "When pigs fly",
+    "idiom": "Spill the beans",
     "image": "images/week2.png"
   },
   {
     "week": 3,
-    "idiom": "Spill the beans",
+    "idiom": "Let the cat out of the bag",
     "image": "images/week3.png"
   }
 ]

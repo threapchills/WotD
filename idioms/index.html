@@ -5,34 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Idiom of the Week</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #ffffff;
-    }
+    body{font-family:'Inter',sans-serif;background:#fff;}
   </style>
 </head>
 <body class="bg-white flex flex-col items-center min-h-screen p-4">
 
   <!-- Logo Top -->
   <div class="my-4 text-center">
-    <a href="https://mikewhyle.com/" title="Back to Mike Whyle Home">
-      <img src="https://mikewhyle.com/wp-content/uploads/2025/03/logohorizontal.png" alt="Mike Whyle Home" class="mx-auto" style="max-width: 150px; height: auto;">
+    <a href="https://mikewhyle.com/WotD" title="Back to WotD home">
+      <img src="https://mikewhyle.com/wp-content/uploads/2025/03/logohorizontal.png" alt="WotD home" class="mx-auto" style="max-width:150px;height:auto;">
     </a>
   </div>
 
-  <!-- This Week's Image -->
+  <!-- Idiom of the week -->
   <div id="current-idiom" class="max-w-md w-full mb-8">
-    <h2 class="text-center text-lg font-semibold text-gray-700 mb-2">This Week's Visual Riddle</h2>
+    <h2 class="text-center text-lg font-semibold text-gray-700 mb-2">Idiom of the week</h2>
     <img id="currentImage" src="" alt="Guess the idiom" class="rounded-xl shadow-md" />
   </div>
 
   <!-- Last Week -->
   <div id="last-week" class="max-w-md w-full mb-8">
-    <h3 class="text-center text-md font-semibold text-gray-600 mb-2">Last Week's Idiom</h3>
+    <h3 class="text-center text-md font-semibold text-gray-600 mb-2">Last week's idiom</h3>
     <img id="lastImage" src="" alt="Last week's idiom" class="rounded-md shadow" />
     <p id="lastCaption" class="text-center text-sm text-gray-500 mt-1 italic"></p>
   </div>
@@ -45,58 +40,33 @@
 
   <!-- Footer note -->
   <div class="text-center text-xs text-gray-500 my-8 max-w-md">
-    Playing with idioms strengthens linguistic intuition, cultural fluency, and creative thinking. Guess first, reveal later — it’s more fun that way.
+    English is a crazy language—see how well you know its common idioms, bizarre figures of speech and quirky turns of phrase.
   </div>
 
   <!-- Logo Bottom -->
   <div class="my-4 text-center">
-    <a href="https://mikewhyle.com/" title="Back to Mike Whyle Home">
-      <img src="https://mikewhyle.com/wp-content/uploads/2025/03/logohorizontal.png" alt="Mike Whyle Home" class="mx-auto" style="max-width: 150px; height: auto;">
+    <a href="https://mikewhyle.com/WotD" title="Back to WotD home">
+      <img src="https://mikewhyle.com/wp-content/uploads/2025/03/logohorizontal.png" alt="WotD home" class="mx-auto" style="max-width:150px;height:auto;">
     </a>
   </div>
 
   <script>
     fetch('idioms.json')
-      .then(res => res.json())
-      .then(data => {
-        const today = new Date();
-        const startOfCycle = new Date(today.getFullYear(), 3, 8); // April 8 = Week 1
-        const dayOffset = Math.floor((today - startOfCycle) / (1000 * 60 * 60 * 24));
-        let weekNumber = Math.floor(dayOffset / 7) + 1;
-
-        // Loop logic for > 56 weeks
-        if (weekNumber > data.length) {
-          weekNumber = ((weekNumber - 1) % data.length) + 1;
-        }
-
-        const thisWeek = data.find(entry => entry.week === weekNumber);
-        const lastWeek = data.find(entry => entry.week === weekNumber - 1);
-        const archive = data.filter(entry => entry.week < weekNumber - 1);
-
-        if (thisWeek) {
-          const img = document.getElementById('currentImage');
-          img.src = thisWeek.image;
-          img.alt = thisWeek.idiom;
-        }
-
-        if (lastWeek) {
-          const lastImg = document.getElementById('lastImage');
-          lastImg.src = lastWeek.image;
-          lastImg.alt = lastWeek.idiom;
-          document.getElementById('lastCaption').textContent = lastWeek.idiom;
-        }
-
-        const container = document.getElementById('archiveList');
-        archive.reverse().forEach(entry => {
-          const block = document.createElement('div');
-          block.innerHTML = `
-            <img src="${entry.image}" alt="${entry.idiom}" class="rounded shadow" />
-            <p class="text-sm text-center italic text-gray-500 mt-1">${entry.idiom}</p>
-          `;
-          container.appendChild(block);
-        });
+      .then(r=>r.json())
+      .then(data=>{
+        const today=new Date();
+        const start=new Date(today.getFullYear(),3,8); // 8 Apr = Week 1
+        const diff=Math.floor((today-start)/(1000*60*60*24));
+        let wk=Math.floor(diff/7)+1;
+        if(wk>data.length)wk=((wk-1)%data.length)+1;
+        const cur=data.find(d=>d.week===wk);
+        const prev=data.find(d=>d.week===wk-1);
+        const arch=data.filter(d=>d.week<wk-1);
+        if(cur){document.getElementById('currentImage').src=cur.image;document.getElementById('currentImage').alt=cur.idiom;}
+        if(prev){document.getElementById('lastImage').src=prev.image;document.getElementById('lastImage').alt=prev.idiom;document.getElementById('lastCaption').textContent=prev.idiom;}
+        const c=document.getElementById('archiveList');
+        arch.reverse().forEach(e=>{const b=document.createElement('div');b.innerHTML=`<img src="${e.image}" alt="${e.idiom}" class="rounded shadow"/><p class='text-sm text-center italic text-gray-500 mt-1'>${e.idiom}</p>`;c.appendChild(b);});
       });
   </script>
-
 </body>
 </html>

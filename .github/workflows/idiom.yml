@@ -1,0 +1,31 @@
+name: Weekly Idiom
+
+on:
+  schedule:
+    - cron:  '0 1 * * MON'      # every Monday 01:00 UTC
+  workflow_dispatch:            # lets you trigger manually
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      SHEET_URL:      ${{ secrets.SHEET_URL }}
+      GH_TOKEN:       ${{ secrets.GH_PAT }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Python libraries
+        run: pip install requests openai pillow
+
+      - name: Run generator script
+        run: python .github/scripts/make_idiom.py
+
+      - name: Commit PNG + JSON
+        run: |
+          git config user.name  "idiom‑bot"
+          git config user.email "bot@example.com"
+          git add idioms/images/*.png idioms/idioms.json
+          git commit -m "auto: add idiom for week $(date +%V)" || echo "Nothing new"
+          git push

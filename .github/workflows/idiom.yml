@@ -17,7 +17,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Python libraries
-        run: pip install requests openai pillow
+        run: pip install requests pillow "openai>=2.0.0b1" --pre
+
 
       - name: Run generator script
         run: python .github/scripts/make_idiom.py

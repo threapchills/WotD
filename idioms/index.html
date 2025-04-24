@@ -63,9 +63,21 @@
         const prev=data.find(d=>d.week===wk-1);
         const arch=data.filter(d=>d.week<wk-1);
         if(cur){document.getElementById('currentImage').src=cur.image;document.getElementById('currentImage').alt=cur.idiom;}
-        if(prev){document.getElementById('lastImage').src=prev.image;document.getElementById('lastImage').alt=prev.idiom;document.getElementById('lastCaption').textContent=prev.idiom;}
+        ifif (prev){
+  lastImage.src = prev.image;
+  lastImage.alt = prev.idiom;
+  lastCaption.innerHTML =
+    `<strong>${prev.idiom}</strong><br>` +
+    `<span class="text-gray-500">${prev.meaning || ''}</span>`;
+}
+
         const c=document.getElementById('archiveList');
-        arch.reverse().forEach(e=>{const b=document.createElement('div');b.innerHTML=`<img src="${e.image}" alt="${e.idiom}" class="rounded shadow"/><p class='text-sm text-center italic text-gray-500 mt-1'>${e.idiom}</p>`;c.appendChild(b);});
+        arch.reverse().forEach(e=>{const b=document.createElement('div');b.innerHTML=`<img src="${e.image}" alt="${e.idiom}" class="rounded shadow"/>
+ <p class="text-sm text-center mt-1">
+   <strong>${e.idiom}</strong><br>
+   <span class="italic text-gray-500">${e.meaning || ''}</span>
+ </p>`
+;c.appendChild(b);});
       });
   </script>
 </body>

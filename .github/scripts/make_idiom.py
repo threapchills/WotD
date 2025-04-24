@@ -13,9 +13,9 @@ rows  = requests.get(sheet_url, timeout=30).json()
 idiom = next(r["Idiom"] for r in rows if int(r["Week"]) == week_num)
 
 # --- generate a literal illustration with GPT‑4o -------------
-prompt = f"Create a whimsical literal illustration of the idiom: “{idiom}”."
+prompt = f"Create a whimsical literal illustration of the idiom: “{idiom}” No text or typography - only picture. Warm sepia tones."
 img_b64 = openai.images.generate(
-            model="gpt-4o-image-beta",
+            model="gpt-image-1",
             prompt=prompt,
             size="1024x1024").data[0].b64_json
 

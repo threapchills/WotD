@@ -32,7 +32,12 @@ prompt = (
 )
 
 def generate(model):
-    resp = openai.images.generate(model=model, prompt=prompt, size="1024x1024")
+    resp = openai.images.generate(
+        model=model,
+        prompt=prompt,
+        size="1024x1024",
+        response_format="b64_json"   # ← add this line
+    )
     return resp.data[0].b64_json
 
 try:

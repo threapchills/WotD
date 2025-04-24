@@ -1,4 +1,5 @@
 name: Weekly Idiom
+
 on:
   schedule:
     - cron: '0 1 * * MON'            # Monday 01:00 UTC
@@ -7,14 +8,20 @@ on:
 jobs:
   make-image:
     runs-on: ubuntu-latest
+
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       GH_PAT:         ${{ secrets.GH_PAT }}
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Install deps
         run: pip install requests openai pillow
 
-      - name: Generate & commit
-        run: python .github/scripts/idiom_bot.py
+      - name: Run generator
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}        # pass it to this step
+        run: |
+          export GH_PAT="${GH_PAT}"            # make it visible to subprocesses
+          python .github/scripts/idiom_bot.py

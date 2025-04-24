@@ -69,6 +69,6 @@ msg = f"auto: add image for week {week_num}"
 subprocess.run(["git", "commit", "-m", msg], check=True)
 subprocess.run(
     ["git", "push",
-     f"https://x-access-token:{os.environ['GH_TOKEN']}@github.com/threapchills/WotD.git",
+     f"https://x-access-token:{os.environ['GH_PAT']}@github.com/threapchills/WotD.git",
      "HEAD:main"],
     check=True)

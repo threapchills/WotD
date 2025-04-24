@@ -49,3 +49,20 @@ run(["git", "add", str(JSON_PATH)], check=True)
 msg = f"auto: add image for week {week_num}"
 run(["git", "commit", "-m", msg], check=True)
 run(["git", "push", f"https://x-access-token:{os.environ['GH_TOKEN']}@github.com/threapchills/WotD.git", "HEAD:main"], check=True)
+
+# --- save PNG if generation succeeds OR skip if not verified ----
+try:
+    resp = openai.images.generate(
+              model="gpt-image-1",
+              prompt=prompt,
+              size="1024x1024")
+    img_b64 = resp.data[0].b64_json
+    dst_path.write_bytes(base64.b64decode(img_b64))
+    print(f"Saved {dst_path}")
+except openai.OpenAIError as e:
+    # 403 or any other model-gate → inform & exit 0
+    print("⚠️  GPT-image-1 unavailable. "
+          "Upload the illustration manually as "
+          f"idioms/images/{file_name} and re-run.")
+    raise SystemExit(0)
+

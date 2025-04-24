@@ -51,34 +51,54 @@
   </div>
 
   <script>
-    fetch('idioms.json')
-      .then(r=>r.json())
-      .then(data=>{
-        const today=new Date();
-        const start=new Date(today.getFullYear(),3,8); // 8 Apr = Week 1
-        const diff=Math.floor((today-start)/(1000*60*60*24));
-        let wk=Math.floor(diff/7)+1;
-        if(wk>data.length)wk=((wk-1)%data.length)+1;
-        const cur=data.find(d=>d.week===wk);
-        const prev=data.find(d=>d.week===wk-1);
-        const arch=data.filter(d=>d.week<wk-1);
-        if(cur){document.getElementById('currentImage').src=cur.image;document.getElementById('currentImage').alt=cur.idiom;}
-        ifif (prev){
-  lastImage.src = prev.image;
-  lastImage.alt = prev.idiom;
-  lastCaption.innerHTML =
-    `<strong>${prev.idiom}</strong><br>` +
-    `<span class="text-gray-500">${prev.meaning || ''}</span>`;
-}
+  fetch('idioms.json')
+    .then(r => r.json())
+    .then(data => {
+      /* ---------------- DOM shortcuts ---------------- */
+      const currentImage  = document.getElementById('currentImage');
+      const lastImage     = document.getElementById('lastImage');     // --- add
+      const lastCaption   = document.getElementById('lastCaption');   // --- add
+      const archiveList   = document.getElementById('archiveList');   // --- add
 
-        const c=document.getElementById('archiveList');
-        arch.reverse().forEach(e=>{const b=document.createElement('div');b.innerHTML=`<img src="${e.image}" alt="${e.idiom}" class="rounded shadow"/>
- <p class="text-sm text-center mt-1">
-   <strong>${e.idiom}</strong><br>
-   <span class="italic text-gray-500">${e.meaning || ''}</span>
- </p>`
-;c.appendChild(b);});
+      /* ---------------- week logic ------------------- */
+      const today  = new Date();
+      const start  = new Date(today.getFullYear(), 3, 8);  // 8 Apr = Week 1
+      const diff   = Math.floor((today - start) / 86_400_000);
+      let   wk     = Math.floor(diff / 7) + 1;
+      if (wk > data.length) wk = ((wk - 1) % data.length) + 1;
+
+      const cur  = data.find(d => d.week === wk);
+      const prev = data.find(d => d.week === wk - 1);
+      const arch = data.filter(d => d.week <  wk - 1);
+
+      /* -------------- current week ------------------- */
+      if (cur) {
+        currentImage.src = cur.image;
+        currentImage.alt = cur.idiom;
+      }
+
+      /* -------------- last week ---------------------- */
+      if (prev) {
+        lastImage.src = prev.image;
+        lastImage.alt = prev.idiom;
+        lastCaption.innerHTML =
+          `<strong>${prev.idiom}</strong><br>` +
+          `<span class="text-gray-500">${prev.meaning || ''}</span>`;
+      }
+
+      /* -------------- archive ------------------------ */
+      arch.reverse().forEach(e => {
+        const block = document.createElement('div');
+        block.innerHTML =
+          `<img src="${e.image}" alt="${e.idiom}" class="rounded shadow"/>` +
+          `<p class="text-sm text-center mt-1">` +
+          `  <strong>${e.idiom}</strong><br>` +
+          `  <span class="italic text-gray-500">${e.meaning || ''}</span>` +
+          `</p>`;
+        archiveList.appendChild(block);
       });
-  </script>
+  });
+</script>
+
 </body>
 </html>

@@ -62,7 +62,7 @@
 
       /* ---------------- week logic ------------------- */
       const today  = new Date();
-      const start  = new Date(today.getFullYear(), 3, 8);  // 8 Apr = Week 1
+      const start  = new Date(today.getFullYear(), 3, 6);  // 8 Apr = Week 1
       const diff   = Math.floor((today - start) / 86_400_000);
       let   wk     = Math.floor(diff / 7) + 1;
       if (wk > data.length) wk = ((wk - 1) % data.length) + 1;

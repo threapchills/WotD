@@ -6,7 +6,7 @@ JSON_PATH = pathlib.Path("idioms/idioms.json")
 
 # ---------- week number -----
 today   = datetime.date.today()
-week_1  = datetime.date(2025, 4, 8)          # Week 1 anchor
+week_1  = datetime.date(2025, 4, 6)          # Week 1 anchor
 week_num = ((today - week_1).days // 7) + 1
 
 # ---------- read idiom -------

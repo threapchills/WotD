@@ -5,7 +5,7 @@ openai.api_key = os.environ["OPENAI_API_KEY"]
 
 # --- work out our week number (Week 1 starts 2025‑04‑08) ----
 today       = datetime.date.today()
-start_cycle = datetime.date(2025, 4, 8)
+start_cycle = datetime.date(2025, 4, 6)
 week_num    = ((today - start_cycle).days // 7) + 1
 
 # --- fetch idiom text from the Google Sheet -----------------

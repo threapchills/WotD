@@ -22,7 +22,7 @@
         src="https://mikewhyle.com/wp-content/uploads/2025/03/logohorizontal.png"
         alt="WotD home"
         class="mx-auto"
-        style="max-width:150px;height:auto;"
+        style="max-width:150px; height:auto;"
       >
     </a>
   </div>
@@ -75,7 +75,7 @@
         src="https://mikewhyle.com/wp-content/uploads/2025/03/logohorizontal.png"
         alt="WotD home"
         class="mx-auto"
-        style="max-width:150px;height:auto;"
+        style="max-width:150px; height:auto;"
       >
     </a>
   </div>
@@ -92,27 +92,30 @@
 
         /* ---------------- week logic ------------------- */
         const today = new Date();
-
-        // ─── CHANGE HERE ───
-        // Week 1 should begin on April 6, 2025 (so 6–13 Apr is week 1,
-        // 13–20 Apr is week 2, etc.).
-        // (Months are 0-indexed: 3 === April.)
+        // Week 1 should begin on April 6, 2025:
+        // (month index 3 == April)
         const start = new Date(today.getFullYear(), 3, 6);
 
-        // Compute how many full days have passed since April 6
+        // How many full days have elapsed since April 6
         const msPerDay = 1000 * 60 * 60 * 24;
         const diffDays = Math.floor((today - start) / msPerDay);
 
-        // Convert to a 1-based week number:
-        // (0–6 days ⇒ week 1, 7–13 ⇒ week 2, 14–20 ⇒ week 3, …)
-        let wk = Math.floor(diffDays / 7) + 1;
+        let wk;
+        if (diffDays > 0 && (diffDays % 7) === 0) {
+          // If it's exactly a 7×N multiple (i.e. a Sunday),
+          // treat that as the LAST day of week (N), not the first day of week (N+1).
+          wk = diffDays / 7;
+        } else {
+          // Otherwise, just do floor(diffDays/7)+1
+          wk = Math.floor(diffDays / 7) + 1;
+        }
 
-        // If wk exceeds the number of entries in idioms.json, wrap around:
+        // Wrap around if the computed week > number of items in idioms.json
         if (wk > data.length) {
           wk = ((wk - 1) % data.length) + 1;
         }
 
-        // Find the “current” and “previous” entries by week number
+        // Look up current (wk), previous (wk−1), and archive (< wk−1)
         const cur  = data.find(d => d.week === wk);
         const prev = data.find(d => d.week === wk - 1);
         const arch = data.filter(d => d.week < wk - 1);
@@ -133,18 +136,16 @@
         }
 
         /* -------------- archive ------------------------ */
-        arch
-          .reverse()
-          .forEach(e => {
-            const block = document.createElement('div');
-            block.innerHTML =
-              `<img src="${e.image}" alt="${e.idiom}" class="rounded shadow"/>` +
-              `<p class="text-sm text-center mt-1">` +
-              `  <strong>${e.idiom}</strong><br>` +
-              `  <span class="italic text-gray-500">${e.meaning || ''}</span>` +
-              `</p>`;
-            archiveList.appendChild(block);
-          });
+        arch.reverse().forEach(e => {
+          const block = document.createElement('div');
+          block.innerHTML =
+            `<img src="${e.image}" alt="${e.idiom}" class="rounded shadow"/>` +
+            `<p class="text-sm text-center mt-1">` +
+            `  <strong>${e.idiom}</strong><br>` +
+            `  <span class="italic text-gray-500">${e.meaning || ''}</span>` +
+            `</p>`;
+          archiveList.appendChild(block);
+        });
 
       }) // .then(data)
       .catch(err => {

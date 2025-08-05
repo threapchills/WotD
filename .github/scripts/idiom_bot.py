@@ -1,7 +1,8 @@
-import os, json, datetime, base64, pathlib, requests, openai, subprocess
+import os, json, datetime, base64, pathlib, requests, subprocess
+from openai import OpenAI, OpenAIError
 
 # ---------- config ----------
-openai.api_key = os.environ["OPENAI_API_KEY"]
+client = OpenAI()
 JSON_PATH = pathlib.Path("idioms/idioms.json")
 
 # ---------- week number -----
@@ -32,11 +33,11 @@ prompt = (
 )
 
 def generate(model):
-    resp = openai.images.generate(
+    resp = client.images.generate(
         model=model,
         prompt=prompt,
         size="1024x1024",
-        response_format="b64_json"   # ← add this line
+        response_format="b64_json",
     )
     return resp.data[0].b64_json
 
@@ -44,12 +45,12 @@ try:
     img_b64 = generate("gpt-image-1")
     print("✓ Generated with gpt-image-1")
 
-except openai.OpenAIError:
+except OpenAIError:
     print("⚠️  gpt-image-1 unavailable → fallback to dall-e-3")
     try:
         img_b64 = generate("dall-e-3")
         print("✓ Generated with dall-e-3")
-    except openai.OpenAIError:
+    except OpenAIError:
         print(
             "❌ Both models failed. "
             f"Upload your own illustration as idioms/images/{file_name} "

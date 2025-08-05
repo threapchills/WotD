@@ -1,7 +1,8 @@
-import os, json, requests, datetime, base64, pathlib, openai
+import os, json, requests, datetime, base64, pathlib
+from openai import OpenAI
 
 sheet_url = os.environ["SHEET_URL"]
-openai.api_key = os.environ["OPENAI_API_KEY"]
+client = OpenAI()
 
 # --- work out our week number (Week 1 starts 2025‑04‑08) ----
 today       = datetime.date.today()
@@ -14,10 +15,12 @@ idiom = next(r["Idiom"] for r in rows if int(r["Week"]) == week_num)
 
 # --- generate a literal illustration with GPT‑4o -------------
 prompt = f"Create a whimsical literal illustration of the idiom: “{idiom}” No text or typography - only picture. Warm sepia tones."
-img_b64 = openai.images.generate(
+img_b64 = client.images.generate(
             model="gpt-image-1",
             prompt=prompt,
-            size="1024x1024").data[0].b64_json
+            size="1024x1024",
+            response_format="b64_json"
+          ).data[0].b64_json
 
 # --- save PNG ------------------------------------------------
 img_path = pathlib.Path(f"idioms/images/week{week_num}.png")
